@@ -1,0 +1,77 @@
+from dataclasses import dataclass, field
+from typing import Dict, Optional
+
+
+@dataclass
+class Patient:
+    patient_id: int
+    name: str
+    age: int
+    symptoms: str
+    current_room: Optional[str] = None
+
+
+class HospitalSystem:
+    def __init__(self):
+        # Simple in‑memory "database" of patients
+        self.patients: Dict[int, Patient] = {}
+        self._next_id: int = 1
+
+    # REQ1: Register patient in the system
+    def register_patient(self, name: str, age: int) -> Patient:
+        patient = Patient(
+            patient_id=self._next_id,
+            name=name,
+            age=age,
+            symptoms="",       # will be filled in REQ2
+            current_room=None  # will be set in REQ3
+        )
+        self.patients[self._next_id] = patient
+        self._next_id += 1
+        print(f"[REQ1] Registered patient {patient.name} with ID {patient.patient_id}")
+        return patient
+
+    # REQ2: Patient enters personal information and symptoms
+    # (basic personal info already captured; here we focus on symptoms update)
+    def enter_personal_info_and_symptoms(self, patient_id: int, symptoms: str) -> None:
+        patient = self.patients.get(patient_id)
+        if not patient:
+            raise ValueError("Patient not found")
+
+        patient.symptoms = symptoms
+        print(f"[REQ2] Updated symptoms for patient {patient.patient_id}: {patient.symptoms}")
+
+    # REQ3: Patient moves rooms
+    def move_patient_room(self, patient_id: int, new_room: str) -> None:
+        patient = self.patients.get(patient_id)
+        if not patient:
+            raise ValueError("Patient not found")
+
+        old_room = patient.current_room
+        patient.current_room = new_room
+        print(f"[REQ3] Patient {patient.patient_id} moved from {old_room} to {new_room}")
+
+
+# Example for testing purposes
+
+if __name__ == "__main__":
+    system = HospitalSystem()
+
+    # REQ1: Register patient
+    p = system.register_patient(name="John Doe", age=45)
+
+    # REQ2: Enter symptoms
+    system.enter_personal_info_and_symptoms(
+        patient_id=p.patient_id,
+        symptoms="Fever, cough, shortness of breath"
+    )
+
+    # REQ3: Move rooms
+    system.move_patient_room(
+        patient_id=p.patient_id,
+        new_room="Room 203B"
+    )
+
+    # Quick check of stored state
+    print("\nFinal patient record:")
+    print(system.patients[p.patient_id])
