@@ -13,6 +13,9 @@ req2_test = [
     {"patient_id": 2, "symptoms": "Nausea\nHeartburn\nIndigestion"},
     {"patient_id": 3, "symptoms": "Dizziness\nShortness of breath"},
 ]
+req2_test_invalid = [
+    {"patient_id": 4, "symptoms": "Headaches"}
+]
 
 # tests for REQ3: move_patient_room(patient_id, new_room)
 req3_test = [
@@ -20,6 +23,11 @@ req3_test = [
     {"patient_id": 2, "new_room": "207"},
     {"patient_id": 3, "new_room": "425"}
 ]
+req3_test_invalid = [
+    {"patient_id": 5, "new_room": "301"}
+]
+
+
 
 
 
@@ -73,7 +81,6 @@ class HospitalSystem:
         patient.current_room = new_room
         print(f"[REQ3] Patient {patient.patient_id} moved from {old_room} to {new_room}")
 
-
 # REQ1 test
 def req1test(system: HospitalSystem):
     for case in req1_test:
@@ -86,6 +93,13 @@ def req2test(system: HospitalSystem):
         system.enter_personal_info_and_symptoms(case["patient_id"], case["symptoms"])
         patient = system.patients[case["patient_id"]]
         assert patient.symptoms == case["symptoms"], f"Failed REQ2: {case}"
+def req2test_invalid(system: HospitalSystem):
+    for case in req2_test_invalid:
+        try:
+            system.enter_personal_info_and_symptoms(case["patient_id"], case.get("symptoms"))
+            assert False, f"Failed REQ2: should have raised ValueError for invalid patient ID {case}"
+        except ValueError:
+            pass  # Test passes
 
 # REQ3 test
 def req3test(system: HospitalSystem):
@@ -93,7 +107,13 @@ def req3test(system: HospitalSystem):
         system.move_patient_room(case["patient_id"], case["new_room"])
         patient = system.patients[case["patient_id"]]
         assert patient.current_room == case["new_room"], f"Failed REQ3: {case}"
-
+def req3test_invalid(system: HospitalSystem):
+    for case in req3_test_invalid:
+        try:
+            system.move_patient_room(case["patient_id"], case["new_room"])
+            assert False, f"Failed REQ3: should have raised ValueError for invalid patient ID {case}"
+        except ValueError:
+            pass  # Test passes
 
 
 # Example for testing purposes
@@ -106,7 +126,11 @@ if __name__ == "__main__":
     
     req2test(system)
     
+    req2test_invalid(system)
+
     req3test(system)
+
+    req3test_invalid(system)
 
     # REQ1: Register patient
     p = system.register_patient(name="John Doe", age=45)
