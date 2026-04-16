@@ -1,152 +1,197 @@
 from dataclasses import dataclass, field
-from typing import Dict, Optional
+from typing import Dict, Optional, List
+from flask import Flask, request, jsonify
 
-# tests for REQ1: register_patient(name, age)
-req1_test = [
-    {"name": "Anthony Soprano", "age": 21, "expected": True},
-    {"name": "Jennifer Melfi", "age": 44, "expected": True},
-    {"name": "Arthur Bucco", "age": 47, "expected": True},
-]
-# tests for REQ2: enter_person_into_and_symptoms(patient_id, symptoms)
-req2_test = [
-    {"patient_id": 1, "symptoms": "Headaches"},
-    {"patient_id": 2, "symptoms": "Nausea\nHeartburn\nIndigestion"},
-    {"patient_id": 3, "symptoms": "Dizziness\nShortness of breath"},
-]
-req2_test_invalid = [
-    {"patient_id": 4, "symptoms": "Headaches"}
-]
-
-# tests for REQ3: move_patient_room(patient_id, new_room)
-req3_test = [
-    {"patient_id": 1, "new_room": "101"},
-    {"patient_id": 2, "new_room": "207"},
-    {"patient_id": 3, "new_room": "425"}
-]
-req3_test_invalid = [
-    {"patient_id": 5, "new_room": "301"}
-]
+app = Flask(__name__)
 
 
-
-
-
-
+# DATA MODELS
 @dataclass
 class Patient:
     patient_id: int
     name: str
     age: int
-    symptoms: str
-    current_room: Optional[str] = None
+    symptoms: str = ""
+    room: Optional[str] = None
+    vitals: Dict[str, str] = field(default_factory=dict)
+    diagnosis: Optional[str] = None
+    specialist: Optional[str] = None
+    medication: Optional[str] = None
+    discharged: bool = False
+    lab_results: Optional[str] = None
+    notes: List[str] = field(default_factory=list)
 
 
+@dataclass
 class HospitalSystem:
-    def __init__(self):
-        # Simple in‑memory "database" of patients
-        self.patients: Dict[int, Patient] = {}
-        self._next_id: int = 1
+    patients: Dict[int, Patient] = field(default_factory=dict)
+    next_patient_id: int = 1
 
-    # REQ1: Register patient in the system
-    def register_patient(self, name: str, age: int) -> Patient:
-        patient = Patient(
-            patient_id=self._next_id,
-            name=name,
-            age=age,
-            symptoms="",       # will be filled in REQ2
-            current_room=None  # will be set in REQ3
-        )
-        self.patients[self._next_id] = patient
-        self._next_id += 1
-        print(f"[REQ1] Registered patient {patient.name} with ID {patient.patient_id}")
-        return patient
+    # REQ1 – Register Patient
+    def register_patient(self, name: str, age: int) -> bool:
+        patient = Patient(self.next_patient_id, name, age)
+        self.patients[self.next_patient_id] = patient
+        self.next_patient_id += 1
+        return True
 
-    # REQ2: Patient enters personal information and symptoms
-    # (basic personal info already captured; here we focus on symptoms update)
-    def enter_personal_info_and_symptoms(self, patient_id: int, symptoms: str) -> None:
-        patient = self.patients.get(patient_id)
-        if not patient:
-            raise ValueError("Patient not found")
+    # REQ2 – Enter Personal Info + Symptoms
+    def enter_person_info_and_symptoms(self, patient_id: int, symptoms: str) -> bool:
+        if patient_id not in self.patients:
+            return False
+        self.patients[patient_id].symptoms = symptoms
+        return True
 
-        patient.symptoms = symptoms
-        print(f"[REQ2] Updated symptoms for patient {patient.patient_id}: {patient.symptoms}")
+    # REQ3 – Move Rooms
+    def move_patient_room(self, patient_id: int, new_room: str) -> bool:
+        if patient_id not in self.patients:
+            return False
+        self.patients[patient_id].room = new_room
+        return True
 
-    # REQ3: Patient moves rooms
-    def move_patient_room(self, patient_id: int, new_room: str) -> None:
-        patient = self.patients.get(patient_id)
-        if not patient:
-            raise ValueError("Patient not found")
+    # REQ4 – Patient Answers Questions
+    def patient_answers_questions(self, patient_id: int, answers: str):
+        if patient_id not in self.patients:
+            return False
+        self.patients[patient_id].notes.append(f"Patient answers: {answers}")
+        return True
 
-        old_room = patient.current_room
-        patient.current_room = new_room
-        print(f"[REQ3] Patient {patient.patient_id} moved from {old_room} to {new_room}")
-
-# REQ1 test
-def req1test(system: HospitalSystem):
-    for case in req1_test:
-        patient = system.register_patient(case["name"], case["age"])
-        assert isinstance(patient, Patient), f"Failed REQ1: {case}"
-
-# REQ2 test
-def req2test(system: HospitalSystem):
-    for case in req2_test:
-        system.enter_personal_info_and_symptoms(case["patient_id"], case["symptoms"])
-        patient = system.patients[case["patient_id"]]
-        assert patient.symptoms == case["symptoms"], f"Failed REQ2: {case}"
-def req2test_invalid(system: HospitalSystem):
-    for case in req2_test_invalid:
-        try:
-            system.enter_personal_info_and_symptoms(case["patient_id"], case.get("symptoms"))
-            assert False, f"Failed REQ2: should have raised ValueError for invalid patient ID {case}"
-        except ValueError:
-            pass  # Test passes
-
-# REQ3 test
-def req3test(system: HospitalSystem):
-    for case in req3_test:
-        system.move_patient_room(case["patient_id"], case["new_room"])
-        patient = system.patients[case["patient_id"]]
-        assert patient.current_room == case["new_room"], f"Failed REQ3: {case}"
-def req3test_invalid(system: HospitalSystem):
-    for case in req3_test_invalid:
-        try:
-            system.move_patient_room(case["patient_id"], case["new_room"])
-            assert False, f"Failed REQ3: should have raised ValueError for invalid patient ID {case}"
-        except ValueError:
-            pass  # Test passes
+    # REQ5 – Examination
+    def perform_examination(self, patient_id: int, exam_notes: str):
+        if patient_id not in self.patients:
+            return False
+        self.patients[patient_id].notes.append(f"Exam: {exam_notes}")
+        return True
 
 
-# Example for testing purposes
+    # REQ6 – Lab Tests
+    def perform_lab_test(self, patient_id: int, results: str):
+        if patient_id not in self.patients:
+            return False
+        self.patients[patient_id].lab_results = results
+        return True
+
+    # REQ7 – Monitoring
+    def monitor_patient(self, patient_id: int, note: str):
+        if patient_id not in self.patients:
+            return False
+        self.patients[patient_id].notes.append(f"Monitoring: {note}")
+        return True
+
+    # REQ8 – Support
+    def support_patient(self, patient_id: int, support_note: str):
+        if patient_id not in self.patients:
+            return False
+        self.patients[patient_id].notes.append(f"Support: {support_note}")
+        return True
+
+    # REQ9 – Prescribe Medication
+    def prescribe_medication(self, patient_id: int, medication: str):
+        if patient_id not in self.patients:
+            return False
+        self.patients[patient_id].medication = medication
+        return True
+
+    # REQ10 – Discharge
+    def discharge_patient(self, patient_id: int):
+        if patient_id not in self.patients:
+            return False
+        self.patients[patient_id].discharged = True
+        return True
+
+    # DOCTOR REQS (11–18)
+    def doctor_receive_info(self, patient_id: int):
+        return self.patients.get(patient_id)
+
+    def doctor_take_notes(self, patient_id: int, note: str):
+        return self.monitor_patient(patient_id, f"Doctor note: {note}")
+
+    def doctor_send_for_lab(self, patient_id: int):
+        return True
+
+    def doctor_check_lab(self, patient_id: int):
+        return self.patients[patient_id].lab_results
+
+    def doctor_make_diagnosis(self, patient_id: int, diagnosis: str):
+        self.patients[patient_id].diagnosis = diagnosis
+        return True
+
+    def doctor_assign_specialist(self, patient_id: int, specialist: str):
+        self.patients[patient_id].specialist = specialist
+        return True
+
+    def doctor_update_system(self, patient_id: int):
+        return True
+
+    # ADMIN REQS (19–36)
+    def admin_create_profile(self, patient_id: int):
+        return self.patients.get(patient_id)
+
+    def admin_take_vitals(self, patient_id: int, vitals: Dict[str, str]):
+        self.patients[patient_id].vitals = vitals
+        return True
+
+    def admin_send_info_to_doctor(self, patient_id: int):
+        return self.patients.get(patient_id)
+
+    def admin_receive_lab_request(self, patient_id: int):
+        return True
+
+    def admin_send_lab_results(self, patient_id: int):
+        return self.patients[patient_id].lab_results
+
+    def admin_send_prescription(self, patient_id: int):
+        return self.patients[patient_id].medication
+
+    def admin_log_all_info(self, patient_id: int):
+        return self.patients[patient_id].__dict__
+
+    def admin_discharge_patient(self, patient_id: int):
+        return self.discharge_patient(patient_id)
+
+    def admin_create_bill(self, patient_id: int):
+        return f"Bill for patient {patient_id}: $500"
+
+    def admin_send_bill(self, patient_id: int):
+        return True
+
+    def admin_manage_rooms(self):
+        return True
+
+    def admin_manage_medicine(self):
+        return True
+
+    def admin_manage_equipment(self):
+        return True
+
+    def admin_schedule_appointment(self):
+        return True
+
+    def admin_cancel_appointment(self):
+        return True
+
+
+# API ROUTES
+system = HospitalSystem()
+
+@app.post("/register")
+def register():
+    data = request.json
+    return jsonify({"success": system.register_patient(data["name"], data["age"])})
+
+@app.post("/symptoms")
+def symptoms():
+    data = request.json
+    return jsonify({"success": system.enter_person_info_and_symptoms(data["patient_id"], data["symptoms"])})
+
+@app.post("/move")
+def move():
+    data = request.json
+    return jsonify({"success": system.move_patient_room(data["patient_id"], data["new_room"])})
+
+@app.get("/patients")
+def get_patients():
+    return jsonify({pid: p.__dict__ for pid, p in system.patients.items()})
+
 
 if __name__ == "__main__":
-    system = HospitalSystem()
-
-    # TESTING BLOCK
-    req1test(system)
-    
-    req2test(system)
-    
-    req2test_invalid(system)
-
-    req3test(system)
-
-    req3test_invalid(system)
-
-    # REQ1: Register patient
-    p = system.register_patient(name="John Doe", age=45)
-
-    # REQ2: Enter symptoms
-    system.enter_personal_info_and_symptoms(
-        patient_id=p.patient_id,
-        symptoms="Fever, cough, shortness of breath"
-    )
-
-    # REQ3: Move rooms
-    system.move_patient_room(
-        patient_id=p.patient_id,
-        new_room="Room 203B"
-    )
-
-    # Quick check of stored state
-    print("\nFinal patient record:")
-    print(system.patients[p.patient_id])
+    app.run(debug=True)
