@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Hospital System</title>
+</head>
+<body>
+    <h1>Hospital Management System</h1>
+
+    <h2>Register Patient</h2>
+    <input id="name" placeholder="Name">
+    <input id="age" placeholder="Age" type="number">
+    <button onclick="register()">Register</button>
+
+    <h2>Enter Symptoms</h2>
+    <input id="pid1" placeholder="Patient ID">
+    <textarea id="symptoms" placeholder="Symptoms"></textarea>
+    <button onclick="symptoms()">Submit Symptoms</button>
+
+    <h2>Move Patient Room</h2>
+    <input id="pid2" placeholder="Patient ID">
+    <input id="room" placeholder="New Room">
+    <button onclick="moveRoom()">Move</button>
+
+    <h2>All Patients</h2>
+    <button onclick="loadPatients()">Refresh</button>
+    <pre id="output"></pre>
+
+<script>
+async function register() {
+    let res = await fetch("/register", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({
+            name: document.getElementById("name").value,
+            age: parseInt(document.getElementById("age").value)
+        })
+    });
+    alert("Registered!");
+}
+
+async function symptoms() {
+    let res = await fetch("/symptoms", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({
+            patient_id: parseInt(document.getElementById("pid1").value),
+            symptoms: document.getElementById("symptoms").value
+        })
+    });
+    alert("Symptoms added!");
+}
+
+async function moveRoom() {
+    let res = await fetch("/move", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({
+            patient_id: parseInt(document.getElementById("pid2").value),
+            new_room: document.getElementById("room").value
+        })
+    });
+    alert("Room moved!");
+}
+
+async function loadPatients() {
+    let res = await fetch("/patients");
+    let data = await res.json();
+    document.getElementById("output").textContent = JSON.stringify(data, null, 2);
+}
+</script>
+</body>
+</html>
