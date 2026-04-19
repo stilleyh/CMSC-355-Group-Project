@@ -1,7 +1,6 @@
 from dataclasses import dataclass, field
 from typing import Dict, Optional, List
 from flask import Flask, request, jsonify
-from flask import Flask, request, jsonify, render_template
 import sqlite3
 import json
 
@@ -25,10 +24,117 @@ class Patient:
     notes: List[str] = field(default_factory=list)
 
 
+# BOOT/LOAD PATIENT DATABASE INTO MEMORY
+def boot_and_load_patients() -> List["Patient"]:
+    conn = sqlite3.connect("database.db")
+    conn.row_factory = sqlite3.Row
+    cur = conn.cursor()
+
+    # 1) Create table
+    cur.execute("""
+    CREATE TABLE IF NOT EXISTS patients (
+        patient_id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT NOT NULL,
+        age INTEGER,
+        symptoms TEXT,
+        room TEXT,
+        vitals TEXT,
+        diagnosis TEXT,
+        specialist TEXT,
+        medication TEXT,
+        discharged INTEGER,
+        lab_results TEXT,
+        notes TEXT
+    )
+    """)
+    conn.commit()
+
+    # 2) Load patients into memory from database
+    cur.execute("SELECT * FROM patients")
+    rows = cur.fetchall()
+
+    patients = []
+
+    for row in rows:
+        patients.append(Patient(
+            patient_id=row["patient_id"],
+            name=row["name"],
+            age=row["age"],
+            symptoms=row["symptoms"] or "",
+            room=row["room"],
+            vitals=json.loads(row["vitals"]) if row["vitals"] else {},
+            diagnosis=row["diagnosis"],
+            specialist=row["specialist"],
+            medication=row["medication"],
+            discharged=bool(row["discharged"]),
+            lab_results=row["lab_results"],
+            notes=json.loads(row["notes"]) if row["notes"] else []
+        ))
+    conn.close()
+    return patients
+
+#SAVE PATIENT LIST TO DATABASE
+def save_patients_to_db(patients):
+    conn = sqlite3.connect("database.db")
+    cur = conn.cursor()
+
+    for p in patients.values() if isinstance(patients, dict) else patients:
+
+        cur.execute("""
+            INSERT INTO patients (
+                patient_id,
+                name,
+                age,
+                symptoms,
+                room,
+                vitals,
+                diagnosis,
+                specialist,
+                medication,
+                discharged,
+                lab_results,
+                notes
+            )
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ON CONFLICT(patient_id) DO UPDATE SET
+                name = excluded.name,
+                age = excluded.age,
+                symptoms = excluded.symptoms,
+                room = excluded.room,
+                vitals = excluded.vitals,
+                diagnosis = excluded.diagnosis,
+                specialist = excluded.specialist,
+                medication = excluded.medication,
+                discharged = excluded.discharged,
+                lab_results = excluded.lab_results,
+                notes = excluded.notes
+        """, (
+            p.patient_id,
+            p.name,
+            p.age,
+            p.symptoms,
+            p.room,
+            json.dumps(p.vitals),
+            p.diagnosis,
+            p.specialist,
+            p.medication,
+            int(p.discharged),
+            p.lab_results,
+            json.dumps(p.notes)
+        ))
+
+    conn.commit()
+    conn.close()
+
 @dataclass
 class HospitalSystem:
     patients: Dict[int, Patient] = field(default_factory=dict)
     next_patient_id: int = 1
+
+    def __post_init__(self):
+        loaded = boot_and_load_patients()
+        self.patients = {p.patient_id: p for p in loaded}
+        self.next_patient_id = max(self.patients.keys(), default=0) + 1
 
     # REQ1 – Register Patient
     def register_patient(self, name: str, age: int) -> bool:
@@ -194,72 +300,6 @@ def move():
 @app.get("/patients")
 def get_patients():
     return jsonify({pid: p.__dict__ for pid, p in system.patients.items()})
-
-
-# BOOT/LOAD PATIENT DATABASE INTO MEMORY
-def boot_and_load_patients() -> List["Patient"]:
-    conn = sqlite3.connect("database.db")
-    conn.row_factory = sqlite3.Row
-    cur = conn.cursor()
-
-    # 1) Create table
-    cur.execute("""
-    CREATE TABLE IF NOT EXISTS patients (
-        patient_id INTEGER PRIMARY KEY AUTOINCREMENT,
-        name TEXT NOT NULL,
-        age INTEGER,
-        symptoms TEXT,
-        room TEXT,
-        vitals TEXT,
-        diagnosis TEXT,
-        specialist TEXT,
-        medication TEXT,
-        discharged INTEGER,
-        lab_results TEXT,
-        notes TEXT
-    )
-    """)
-    conn.commit()
-
-    # 2) Load patients into memory from database
-    cur.execute("SELECT * FROM patients")
-    rows = cur.fetchall()
-
-    patients = []
-
-    for row in rows:
-        patients.append(Patient(
-            patient_id=row["patient_id"],
-            name=row["name"],
-            age=row["age"],
-            symptoms=row["symptoms"] or "",
-            room=row["room"],
-            vitals=json.loads(row["vitals"]) if row["vitals"] else {},
-            diagnosis=row["diagnosis"],
-            specialist=row["specialist"],
-            medication=row["medication"],
-            discharged=bool(row["discharged"]),
-            lab_results=row["lab_results"],
-            notes=json.loads(row["notes"]) if row["notes"] else []
-        ))
-    conn.close()
-    return patients
-
-#SAVE PATIENT LIST TO DATABASE
-def save_patients_to_db(patients):
-    conn = sqlite3.connect("database.db")
-    conn.row_factory = sqlite3.Row
-    cur = conn.cursor()
-
-    for p in patients:
-        cur.execute("""
-            UPDATE patients
-            SET name = ?, age = ?, symptoms = ?, room = ?
-            WHERE patient_id = ?
-            """, (p.name, p.age, p.symptoms, p.room, p.patient_id))
-    
-    conn.commit()
-    conn.close()
 
 
 
