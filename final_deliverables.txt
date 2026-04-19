@@ -1,0 +1,7 @@
+- [ ] Backend enironment?
+    maybe SQLite
+        lightweight
+        no server needed
+        compatible with Flask API tools
+
+- [ ] Finalized Powerpoint Presentation
