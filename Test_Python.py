@@ -170,6 +170,73 @@ class HospitalSystem:
         return True
 
 
+# BOOT/LOAD PATIENT DATABASE INTO MEMORY
+# IF NO DATABASE EXISTS, CREATE NEW TABLE
+def boot_and_load_patients():
+    conn = sqlite3.connect("database.db")
+    conn.row_factory = sqlite3.Row
+    cur = conn.cursor()
+
+    cur.execute("SELECT * FROM patients")
+    rows = cur.fetchall()
+
+    patients = []
+
+    for row in rows:
+        patients.append(Patient(
+            patient_id=row["patient_id"],
+            name=row["name"],
+            age=row["age"],
+            symptoms=row["symptoms"] or "",
+            room=row["room"],
+            vitals=json.loads(row["vitals"]) if row["vitals"] else {},
+            diagnosis=row["diagnosis"],
+            specialist=row["specialist"],
+            medication=row["medication"],
+            discharged=bool(row["discharged"]),
+            lab_results=row["lab_results"],
+            notes=json.loads(row["notes"]) if row["notes"] else []
+        ))
+
+    conn.close()
+    return patients
+
+# SAVE PATIENT LIST TO DATABASE
+# DELETES DATABASE CONTENT AND REPLACES WITH CURRENT TABLE
+def save_patients_to_db(patients):
+    conn = sqlite3.connect("database.db")
+    cur = conn.cursor()
+
+    cur.execute("DELETE FROM patients")
+
+    for p in patients.values() if isinstance(patients, dict) else patients:
+        cur.execute("""
+            INSERT INTO patients (
+                patient_id, name, age, symptoms, room,
+                vitals, diagnosis, specialist, medication,
+                discharged, lab_results, notes
+            )
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """, (
+            p.patient_id,
+            p.name,
+            p.age,
+            p.symptoms,
+            p.room,
+            json.dumps(p.vitals),
+            p.diagnosis,
+            p.specialist,
+            p.medication,
+            int(p.discharged),
+            p.lab_results,
+            json.dumps(p.notes)
+        ))
+
+    conn.commit()
+    conn.close()
+
+
+
 # API ROUTES
 system = HospitalSystem()
 
