@@ -1,5 +1,6 @@
 - [ ] Add list saving to each html page so they align with logic in "PageInforSubmit.html":
     Need to maintain persistent [patient] list in memory between html files
-    Save live [patient] list to database at end of session
+
+- [ ] Save live [patient] list to database at end of session
 
 - [ ] Add Flask commmands to load and save database using "boot_and_load_patients()" and "save_patients_to_db()" from Test_Python.
