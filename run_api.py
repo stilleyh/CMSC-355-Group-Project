@@ -25,31 +25,11 @@ class Patient:
 
 
 # BOOT/LOAD PATIENT DATABASE INTO MEMORY
-def boot_and_load_patients() -> List["Patient"]:
+def boot_and_load_patients():
     conn = sqlite3.connect("database.db")
     conn.row_factory = sqlite3.Row
     cur = conn.cursor()
 
-    # 1) Create table
-    cur.execute("""
-    CREATE TABLE IF NOT EXISTS patients (
-        patient_id INTEGER PRIMARY KEY AUTOINCREMENT,
-        name TEXT NOT NULL,
-        age INTEGER,
-        symptoms TEXT,
-        room TEXT,
-        vitals TEXT,
-        diagnosis TEXT,
-        specialist TEXT,
-        medication TEXT,
-        discharged INTEGER,
-        lab_results TEXT,
-        notes TEXT
-    )
-    """)
-    conn.commit()
-
-    # 2) Load patients into memory from database
     cur.execute("SELECT * FROM patients")
     rows = cur.fetchall()
 
@@ -70,6 +50,7 @@ def boot_and_load_patients() -> List["Patient"]:
             lab_results=row["lab_results"],
             notes=json.loads(row["notes"]) if row["notes"] else []
         ))
+
     conn.close()
     return patients
 
@@ -78,36 +59,16 @@ def save_patients_to_db(patients):
     conn = sqlite3.connect("database.db")
     cur = conn.cursor()
 
-    for p in patients.values() if isinstance(patients, dict) else patients:
+    cur.execute("DELETE FROM patients")
 
+    for p in patients.values() if isinstance(patients, dict) else patients:
         cur.execute("""
             INSERT INTO patients (
-                patient_id,
-                name,
-                age,
-                symptoms,
-                room,
-                vitals,
-                diagnosis,
-                specialist,
-                medication,
-                discharged,
-                lab_results,
-                notes
+                patient_id, name, age, symptoms, room,
+                vitals, diagnosis, specialist, medication,
+                discharged, lab_results, notes
             )
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-            ON CONFLICT(patient_id) DO UPDATE SET
-                name = excluded.name,
-                age = excluded.age,
-                symptoms = excluded.symptoms,
-                room = excluded.room,
-                vitals = excluded.vitals,
-                diagnosis = excluded.diagnosis,
-                specialist = excluded.specialist,
-                medication = excluded.medication,
-                discharged = excluded.discharged,
-                lab_results = excluded.lab_results,
-                notes = excluded.notes
         """, (
             p.patient_id,
             p.name,
