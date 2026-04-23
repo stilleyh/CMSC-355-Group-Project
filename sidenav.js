@@ -1,7 +1,5 @@
-//borrowed code from:https://www.sliderrevolution.com/resources/css-sidebar-menus/
-
 jQuery(function ($) {
-    $(".sidebar-dropdown > a").click(function () {
+    $(document).on("click", ".sidebar-dropdown > a", function () {
         $(".sidebar-submenu").slideUp(200);
         if ($(this).parent().hasClass("active")) {
             $(".sidebar-dropdown").removeClass("active");
@@ -13,11 +11,11 @@ jQuery(function ($) {
         }
     });
 
-    $("#close-sidebar").click(function () {
+    $(document).on("click", "#close-sidebar", function () {
         $(".page-wrapper").removeClass("toggled");
     });
 
-    $("#show-sidebar").click(function () {
+    $(document).on("click", "#show-sidebar", function () {
         $(".page-wrapper").addClass("toggled");
     });
 });

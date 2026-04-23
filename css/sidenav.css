@@ -473,3 +473,8 @@ body {
 .chiller-theme .sidebar-footer>a:last-child {
   border-right: none;
 }
+
+.page-wrapper {
+    width: 100%;
+    overflow-x: hidden;
+}
