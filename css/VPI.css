@@ -1,0 +1,27 @@
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+/* Makes sidebar and content sit side by side */
+.page-wrapper {
+    display: flex;
+    min-height: 100vh;
+}
+
+.page-content {
+    margin-left: 260px;  /* same width as your sidebar */
+    padding: 20px;
+    width: 100%;
+    margin-top: 0;
+}
+.sidebar-wrapper {
+    width: 260px; /* ← match this number in your page-content margin-left */
+    position: fixed;    /* stays in place when you scroll */
+    top: 0;
+    left: 0;
+    height: 100vh;      /* full screen height */
+    overflow-y: auto;   /* scroll inside sidebar if needed */
+    z-index: 999;
+}
