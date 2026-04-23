@@ -1,71 +1,61 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="UTF-8">
-        <meta name="description" content="Dashboard-staff view">
-        <title>Dashboard</title>
-        <link rel="stylesheet" href="Dashboard-staff.css">
-        
-    </head>
-    <body>
-        <!--Side Bar-->
-        <h2>Dashboard overview</h2>
 
-        
-        <div id="mySidenav" class="sidenav">
-            <a href="#" class="" >Patients</a>
-            <!--This will include:
-            -search bar (used to find patient)
-            -List of patients and their number, if active, etc.
-                -Press on it and it'll take you to different page where it contains
-                everything of patient
-            -->
-            
-        </div>
-        <div id="mySidenav" class="sidenav">
-            <a href="#" class="" >Appointments</a>
-            <!--will include
-            -big calander
-            -search date
-                -when you press one of the boxes, it expands giviing you:
-                    list of patients and time. Will also have description of what 
-                    the schedule is about, and link towards patients profile
-        -->
-        </div>
-        
-        <div id="mySidenav" class="sidenav">
-            <a href="#" class="" >Doctors</a>
-            <!--will include
-            -List of doctors
-            -link to send messages to them
-            -requests/alerts
-            -what they do
-            -pic of face
-            -not sure if this is allowed, but similar to calander
-            except it can show you all doctors calanders
-            -->
-        </div>
-  
-        <div id="mySidenav" class="sidenav">
-            <a href="#" class="" >Staff</a>
-        <!--inclde following:
-            -will have names of staff
-            -what they do
-            -contact info
-            -pic
-        -->
-        </div>
+<head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Dashboard-staff view">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="Dashboard-staff.css">
 
-        <div id="mySidenav" class="sidenav">
-            <a href="#" class="" >Inventory</a>
-                    <!--no idea what this is-->
-        </div>
+    <!--Sidenav START-->
+    <link rel="stylesheet" href="css/sidenav.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <!--Sidenav END-->
 
-        <div id="mySidenav" class="sidenav">
-            <a href="#" class="" >Messages</a>
-            <!--place to see alerts
-                also can be used to communicate between staff and also patients-->
-        </div>
-        
-    </body>
+</head>
+
+<body>
+    <h1>
+        <a href="Dashboard.html"> <img src="meditrack.png" alt="Logo" style="width: 150px;"></a>
+    </h1>
+
+    <!--Adding sidenav-->
+    <div id="SideNav"></div>
+
+
+    <script>
+        fetch('SideNav.html')
+            .then(res => res.text())
+            .then(html => {
+                document.getElementById('SideNav').innerHTML = html;
+                initSidebar();
+            });
+
+        function initSidebar() {
+            $(".sidebar-dropdown > a").click(function () {
+                $(".sidebar-submenu").slideUp(200);
+                if ($(this).parent().hasClass("active")) {
+                    $(".sidebar-dropdown").removeClass("active");
+                    $(this).parent().removeClass("active");
+                } else {
+                    $(".sidebar-dropdown").removeClass("active");
+                    $(this).next(".sidebar-submenu").slideDown(200);
+                    $(this).parent().addClass("active");
+                }
+            });
+
+            $("#close-sidebar").click(function () {
+                $(".page-wrapper").removeClass("toggled");
+            });
+
+            $("#show-sidebar").click(function () {
+                $(".page-wrapper").addClass("toggled");
+            });
+        }
+    </script>
+
+</body>
+
 </html>

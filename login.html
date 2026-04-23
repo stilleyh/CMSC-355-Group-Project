@@ -4,26 +4,27 @@
         <meta charset="UTF-8">
         <meta name="description" content="Just login. There will be seperate create login page">
         <title>Login</title>
-        <link rel="stylesheet" href="login.css">
+        <link rel="stylesheet" href="css\login.css">
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link href="https://fonts.googleapis.com/css?family=Ubuntu" rel="stylesheet">
         <!--make link for whatever to make it work-->
     </head>
     <!--Note from your login, certain people are able to access different stuff and different patients-->
 
     <body>
-        <h1>Placement Name of APP</h1>
+        <h1>
+            <img src="#" alt="" width="auto" height="auto">
+        </h1>
         <div class="container">
-            <form action="">
+            <form>
                 <h2>Login</h2>
-                <div class = "input-box">
-                    <input type ="text" placeholder="Username" required>
-                </div>
-                <div class = "input-box">
-                    <input type ="text" placeholder="Password" required>
-                </div>
+                <input class="UN" type="text" placeholder="Username" required>
+        
+                <input class="PASS" type ="text" placeholder="Password" required>
 
-                <div class="forgot">  <!--Note: no remember me, because of sensitive info-->
+                <p class="forgot">  <!--Note: no remember me, because of sensitive info-->
                     <a href="#">Forgot Password?</a>
-                </div>
+                </p>
 
                 <button type="submit" class="btn">Login</button>
 
@@ -37,6 +38,12 @@
             </form>
         </div>
     </body>
+
+    <!--NOTE if there is still time, ill clean it up a bit more. 
+    ALSO MEDITRACK NAME WOULD BE NICE TO ADD IF I CAN FIND
+     ACCOUNT NEEDS TO BE MADE
+    need to be able to link this page to dashboard. No need for 
+    making registration at the moment for demo.-->
 
 
 </html>
