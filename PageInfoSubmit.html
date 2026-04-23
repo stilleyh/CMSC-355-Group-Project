@@ -386,7 +386,7 @@
                 <div style="overflow:auto; margin-top: 20px;">
                     <div style="float:right;">
                         <button type="button" onclick="nextPrev(-1)">Previous</button>
-                        <button type="submit" class="btn">Submit</button>
+                        <button onclick="savePatients()">Submit</button>
                     </div>
                 </div>
             </div>
@@ -437,6 +437,17 @@
             currentTab += n;
             showTab(currentTab);
         }
+
+        function savePatients() {
+            fetch("/api/patients/save", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(Object.values(window.systemPatients || {}))
+            })
+            
+    .then(r => r.json())
+    .then(console.log);
+}
 
         showTab(currentTab);
     </script>

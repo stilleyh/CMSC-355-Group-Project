@@ -267,8 +267,7 @@ def get_patients():
 # SAVE UPDATED TABLE TO DB
 @app.route("/api/patients/save", methods=["POST"])
 def save_patients():
-    patients = [Patient(**p) for p in request.json]
-    save_patients_to_db(patients)
+    save_patients_to_db(system.patients)
     return {"status": "ok"}
 
 
