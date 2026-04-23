@@ -386,7 +386,7 @@
                 <div style="overflow:auto; margin-top: 20px;">
                     <div style="float:right;">
                         <button type="button" onclick="nextPrev(-1)">Previous</button>
-                        <button onclick="savePatients()">Submit</button>
+                        <button type="button" onclick="savePatients()">Submit</button>
                     </div>
                 </div>
             </div>
@@ -439,15 +439,56 @@
         }
 
         function savePatients() {
-            fetch("/api/patients/save", {
+            const patient = {
+                patient_id: Date.now(),
+
+                name: {
+                    first: document.querySelector("#tab1 input[placeholder='First Name']").value,
+                    middle: document.querySelector("#tab1 input[placeholder='Middle Name (Optional)']").value,
+                    last: document.querySelector("#tab1 input[placeholder='Last Name']").value
+                },
+
+                dob: document.querySelector("#dob").value,
+
+                sex: document.querySelector("input[name='sex']:checked")?.value || "",
+
+                address: {
+                    country: document.querySelector("#country").value
+                },
+
+                contact: {
+                    phone: document.querySelector("input[type='tel']").value,
+                    email: document.querySelector("input[type='email']").value
+                },
+
+                symptoms: document.querySelector("#symptoms").value,
+
+                clinical: {
+                    allergies: document.querySelector("#allergies").value,
+                    previousMed: document.querySelector("#prevMed").value,
+                    currentMed: document.querySelector("#currentMed").value,
+                    dosage: document.querySelector("#dosage").value,
+                    frequency: document.querySelector("#frequency").value,
+                    familyHistory: document.querySelector("#famHistory").value,
+                    prevVisits: document.querySelector("#prevVisits").value
+                },
+
+                admission: {
+                    date: document.querySelector("input[name='admissionDate']").value,
+                    time: document.querySelector("input[name='admissionTime']").value,
+                    room: document.querySelector("#tab5 input[type='text']").value
+                }
+            };
+
+            fetch("/patients/save", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(Object.values(window.systemPatients || {}))
+                body: JSON.stringify([patient])
             })
-            
-    .then(r => r.json())
-    .then(console.log);
-}
+            .then(r => r.json())
+            .then(console.log)
+            .catch(console.error);
+        }
 
         showTab(currentTab);
     </script>

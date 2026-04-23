@@ -4,8 +4,7 @@ from flask import Flask, request, jsonify
 import sqlite3
 import json
 
-app = Flask(__name__)
-
+app = Flask(__name__, static_folder=".", static_url_path="")
 
 # DATA MODELS
 @dataclass
@@ -34,7 +33,7 @@ class HospitalSystem:
         patient = Patient(self.next_patient_id, name, age)
         self.patients[self.next_patient_id] = patient
         self.next_patient_id += 1
-        return True
+        return patient.patient_id
 
     # REQ2 – Enter Personal Info + Symptoms
     def enter_person_info_and_symptoms(self, patient_id: int, symptoms: str) -> bool:
@@ -244,10 +243,11 @@ def save_patients_to_db(patients):
 system = HospitalSystem()
 system.patients = {p.patient_id: p for p in boot_and_load_patients()}
 
-@app.post("/register")
+@app.route("/register", methods=["POST"])
 def register():
-    data = request.json
-    return jsonify({"success": system.register_patient(data["name"], data["age"])})
+    data = request.get_json()
+    patient_id = system.register_patient(data["name"], data["age"])
+    return jsonify({"patient_id": patient_id})
 
 @app.post("/symptoms")
 def symptoms():
