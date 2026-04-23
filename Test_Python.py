@@ -172,6 +172,7 @@ class HospitalSystem:
         return True
 
 
+
 # BOOT/LOAD PATIENT DATABASE INTO MEMORY
 # IF NO DATABASE EXISTS, CREATE NEW TABLE
 def boot_and_load_patients():
@@ -241,6 +242,7 @@ def save_patients_to_db(patients):
 
 # API ROUTES
 system = HospitalSystem()
+system.patients = {p.patient_id: p for p in boot_and_load_patients()}
 
 @app.post("/register")
 def register():
@@ -257,9 +259,17 @@ def move():
     data = request.json
     return jsonify({"success": system.move_patient_room(data["patient_id"], data["new_room"])})
 
+# UNPACK DB
 @app.get("/patients")
 def get_patients():
     return jsonify({pid: p.__dict__ for pid, p in system.patients.items()})
+
+# SAVE UPDATED TABLE TO DB
+@app.route("/api/patients/save", methods=["POST"])
+def save_patients():
+    patients = [Patient(**p) for p in request.json]
+    save_patients_to_db(patients)
+    return {"status": "ok"}
 
 
 if __name__ == "__main__":
