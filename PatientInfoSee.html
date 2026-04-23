@@ -4,16 +4,18 @@
     <head>
         <meta charset="UTF-8">
         <meta name="description" content="Basic Patient information. Seeing it, and being able to update it">
+        <meta http-equiv="Content-Security-Policy">
         <title>View Patient Info</title>
-        <link rel="stylesheet" href="VPI.css">
+        <link rel="stylesheet" href="css/VPI.css">
 
         <!--Sidenav START-->
         <link rel="stylesheet" href="css/sidenav.css">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/css/bootstrap.min.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-        <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+        <script src="https://code.jquery.com/jquery-3.7.1.slim.min.js"></script>
         <script defer src="sidenav.js"></script>
         <!--Sidenav END-->
+
 
         <!--make link for whatever to make it work-->
 
@@ -24,71 +26,86 @@
 
 
     <body>
-        <h1>
-            <a href="Dashboard.html"> <img src="meditrack.png" alt="Logo" style="width: 150px;"></a>
-        </h1>
-        <!--Sidebar of Things you can do-->
-        <!--search bar. wont do anything for now-->
 
-        <h2>View Patient info</h2>
+        <div id="SideNav"></div>   
 
-        <h3>Name: </h3>
-        <div class="insert" id="name"></div>
+        <div class="page-content"> 
 
-        <h3>Date of Birth: </h3>
-        <div class="insert" id="dob"></div>
+            <h1>
+                <a href="Dashboard.html"> <img src="meditrack.png" alt="Logo" style="width: 150px;"></a>
+            </h1>
+            <!--Sidebar of Things you can do-->
+            <!--search bar. wont do anything for now-->
 
-        <h3>Gender: </h3>
-        <div class="insert" id="gender"></div>
+            <h2>View Patient info</h2>
 
-        <h3>contact information: </h3>
-        <div class="insert" id="CI"></div>
+            <h3>Name: </h3>
+            <div class="insert" id="name"></div>
 
-        <h3>Date of admission</h3>
-        <div class="insert" id="DOA"></div>
+            <h3>Date of Birth: </h3>
+            <div class="insert" id="dob"></div>
 
-        <h3>Time of admission: </h3>
-        <div class="insert" id="TOA"></div>
-        
-        <h3>Time of Discharge: </h3>
-        <div class="insert" id="CI"></div>
+            <h3>Gender: </h3>
+            <div class="insert" id="gender"></div>
 
-        <h3>Clinical history: </h3>
-        <div class="insert" id="CI"></div>
+            <h3>contact information: </h3>
+            <div class="insert" id="CI"></div>
 
-        <!--continue tomorrow-->
-        <!--YOU will be able to see: use other language. cant be done with html
-                -Name
-                -date of birth
-                -gender
-                -contact information
-                -insurance
-                -Date of admission
-                -time of admission
-                -Time of discharge
-                -clinical history including:
-                -allergies
-                -medications
-                -previous hospital visits
-                -etc. search later
-                -procedure/service performed //Notes of proceedure
-                -treatment plans including:
-                -Medications, therapies, and follow-up instructions
-            -->
-        <!--Note this can be edited, incase for updating
-                might need to enter special codes for this that sends to 
-                notification to others, so that nobody suspicious changes things)
+            <h3>Date of admission</h3>
+            <div class="insert" id="DOA"></div>
+
+            <h3>Time of admission: </h3>
+            <div class="insert" id="TOA"></div>
+            
+            <h3>Time of Discharge: </h3>
+            <div class="insert" id="CI"></div>
+
+            <h3>Clinical history: </h3>
+            <div class="insert" id="CI"></div>
+
+            <!--continue tomorrow-->
+            <!--YOU will be able to see: use other language. cant be done with html
+                    -Name
+                    -date of birth
+                    -gender
+                    -contact information
+                    -insurance
+                    -Date of admission
+                    -time of admission
+                    -Time of discharge
+                    -clinical history including:
+                    -allergies
+                    -medications
+                    -previous hospital visits
+                    -etc. search later
+                    -procedure/service performed //Notes of proceedure
+                    -treatment plans including:
+                    -Medications, therapies, and follow-up instructions
                 -->
+            <!--Note this can be edited, incase for updating
+                    might need to enter special codes for this that sends to 
+                    notification to others, so that nobody suspicious changes things)
+                    -->
+        
+
+            <footer>
+                <p>Need help? Please contact us at:</p>
+                <a href="mailto:someone@example.com">someone@example.com</a>
+                <br>
+                <a href="tel:+1-234-567-8901">Example phone number</a>
+                <!--This will include: -->
+                <!--Need help? EMAIL LINK-->
+                <!--etc...-->
+            </footer>
+
+            <script>
+                fetch('SideNav.html')
+                    .then(res => res.text())
+                    .then(html => document.getElementById('SideNav').innerHTML = html);
+            </script>
+        </div>
 
     </body>
-    <footer>
-        <p>Need help? Please contact us at:</p>
-        <a href="mailto:someone@example.com">someone@example.com</a>
-        <br>
-        <a href="tel:+1-234-567-8901">Example phone number</a>
-        <!--This will include: -->
-        <!--Need help? EMAIL LINK-->
-        <!--etc...-->
-    </footer>
+
 
 </html>
