@@ -279,7 +279,7 @@ def move():
     return jsonify({"success": system.move_patient_room(data["patient_id"], data["new_room"])})
 
 # UNPACK DB
-@app.get("/patients")
+@app.get("/patients/load")
 def get_patients():
     return jsonify({pid: p.__dict__ for pid, p in system.patients.items()})
 

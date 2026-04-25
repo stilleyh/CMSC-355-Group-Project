@@ -65,6 +65,13 @@
 
 
     <script>
+        window.onload = function () {
+            fetch("/patients/load")
+            .then(r => r.json())
+            .then(data => {
+                console.log("Loaded patients:", data);
+            });
+        };
         fetch('SideNav.html')
             .then(res => res.text())
             .then(html => {
