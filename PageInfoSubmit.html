@@ -67,13 +67,13 @@
                 <div class="tab" id="tab1">
                     <h3>Name:</h3>
                     <div class="input-box">
-                        <input type="text" placeholder="First Name" required>
+                        <input type="text" id="first_name" placeholder="First Name" required>
                     </div>
                     <div class="input-box">
-                        <input type="text" placeholder="Middle Name (Optional)">
+                        <input type="text" id="middle_name" placeholder="Middle Name (Optional)">
                     </div>
                     <div class="input-box">
-                        <input type="text" placeholder="Last Name" required>
+                        <input type="text" id="last_name" placeholder="Last Name" required>
                     </div>
 
                     <h3>Date of Birth:</h3>
@@ -100,19 +100,19 @@
                     <h3>Address:</h3>
                     <div class="input-box">
                         <label>Address Line:</label>
-                        <input type="text" required>
+                        <input type="text" id="address_line" required>
                     </div>
                     <div class="input-box">
                         <label>City:</label>
-                        <input type="text" required>
+                        <input type="text" id="city" required>
                     </div>
                     <div class="input-box">
                         <label>State / Province / Region:</label>
-                        <input type="text" required>
+                        <input type="text" id="state" required>
                     </div>
                     <div class="input-box">
                         <label>Zip / Postal Code:</label>
-                        <input type="text" required>
+                        <input type="text" id="zip" required>
                     </div>
 
                     <select class="form-select" autocomplete="country" id="country" name="country">
@@ -301,10 +301,10 @@
 
                     <h3>Contact Information:</h3>
                     <div class="input-box">
-                        <input type="tel" placeholder="Phone Number" required>
+                        <input type="tel" id="phone" placeholder="Phone Number" required>
                     </div>
                     <div class="input-box">
-                        <input type="email" placeholder="Email (Optional)">
+                        <input type="email" id="email" placeholder="Email (Optional)">
                     </div>
 
                     <div style="overflow:auto; margin-top: 20px;">
@@ -437,32 +437,39 @@
                     currentTab += n;
                     showTab(currentTab);
                 }
-
                 function savePatients() {
                     const patient = {
                         patient_id: Date.now(),
 
+                        // TAB 1: Personal Info
                         name: {
-                            first: document.querySelector("#tab1 input[placeholder='First Name']").value,
-                            middle: document.querySelector("#tab1 input[placeholder='Middle Name (Optional)']").value,
-                            last: document.querySelector("#tab1 input[placeholder='Last Name']").value
+                            first: document.querySelector("#first_name").value,
+                            middle: document.querySelector("#middle_name").value,
+                            last: document.querySelector("#last_name").value
                         },
 
                         dob: document.querySelector("#dob").value,
-
                         sex: document.querySelector("input[name='sex']:checked")?.value || "",
 
+                        // TAB 2: Address & Contact
                         address: {
+                            line: document.querySelector("#address_line").value,
+                            city: document.querySelector("#city").value,
+                            state: document.querySelector("#state").value,
+                            zip: document.querySelector("#zip").value,
                             country: document.querySelector("#country").value
                         },
 
                         contact: {
-                            phone: document.querySelector("input[type='tel']").value,
-                            email: document.querySelector("input[type='email']").value
+                            phone: document.querySelector("#phone").value,
+                            email: document.querySelector("#email").value
                         },
 
+                        // TAB 3: Symptoms
+                        reasonForComing: document.querySelector("#RFC").value,
                         symptoms: document.querySelector("#symptoms").value,
 
+                        // TAB 4: Clinical History
                         clinical: {
                             allergies: document.querySelector("#allergies").value,
                             previousMed: document.querySelector("#prevMed").value,
@@ -473,24 +480,23 @@
                             prevVisits: document.querySelector("#prevVisits").value
                         },
 
+                        // TAB 5: Admission
                         admission: {
                             date: document.querySelector("input[name='admissionDate']").value,
                             time: document.querySelector("input[name='admissionTime']").value,
-                            room: document.querySelector("#tab5 input[type='text']").value
+                            room: document.querySelector("#roomNumber").value
                         }
                     };
 
                     fetch("/patients/save", {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify([patient])
+                        body: JSON.stringify(patient)
                     })
                     .then(r => r.json())
                     .then(console.log)
                     .catch(console.error);
                 }
-
-                showTab(currentTab);
             </script>
         </div>
 

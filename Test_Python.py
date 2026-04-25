@@ -220,6 +220,8 @@ def boot_and_load_patients():
     conn.close()
     return patients
 
+patients = boot_and_load_patients()
+
 # SAVE PATIENT LIST TO DATABASE
 # DELETES DATABASE CONTENT AND REPLACES WITH CURRENT TABLE
 def save_patients_to_db(patients):
