@@ -179,6 +179,23 @@ def boot_and_load_patients():
     conn.row_factory = sqlite3.Row
     cur = conn.cursor()
 
+    cur.execute("""
+    CREATE TABLE IF NOT EXISTS patients (
+        patient_id INTEGER PRIMARY KEY,
+        name TEXT,
+        age INTEGER,
+        symptoms TEXT,
+        room TEXT,
+        vitals TEXT,
+        diagnosis TEXT,
+        specialist TEXT,
+        medication TEXT,
+        discharged INTEGER,
+        lab_results TEXT,
+        notes TEXT
+    )
+    """)
+
     cur.execute("SELECT * FROM patients")
     rows = cur.fetchall()
 
