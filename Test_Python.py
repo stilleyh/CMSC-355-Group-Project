@@ -3,6 +3,7 @@ from typing import Dict, Optional, List
 from flask import Flask, request, jsonify
 import sqlite3
 import json
+import pdb
 
 app = Flask(__name__, static_folder=".", static_url_path="")
 
@@ -33,6 +34,7 @@ class HospitalSystem:
         patient = Patient(self.next_patient_id, name, age)
         self.patients[self.next_patient_id] = patient
         self.next_patient_id += 1
+#        pdb.set_trace() # DEBUG
         return patient.patient_id
 
     # REQ2 – Enter Personal Info + Symptoms
@@ -172,10 +174,12 @@ class HospitalSystem:
 
 
 
+
+
 # BOOT/LOAD PATIENT DATABASE INTO MEMORY
 # IF NO DATABASE EXISTS, CREATE NEW TABLE
 def boot_and_load_patients():
-    conn = sqlite3.connect("database.db")
+    conn = sqlite3.connect("patients.db")
     conn.row_factory = sqlite3.Row
     cur = conn.cursor()
 
@@ -218,14 +222,18 @@ def boot_and_load_patients():
         ))
 
     conn.close()
+    
     return patients
 
 patients = boot_and_load_patients()
+print("LOADED FROM DB:", len(patients))
+system = HospitalSystem()
+system.patients = {p.patient_id: p for p in patients}
 
 # SAVE PATIENT LIST TO DATABASE
 # DELETES DATABASE CONTENT AND REPLACES WITH CURRENT TABLE
 def save_patients_to_db(patients):
-    conn = sqlite3.connect("database.db")
+    conn = sqlite3.connect("patients.db")
     cur = conn.cursor()
 
     cur.execute("DELETE FROM patients")
@@ -259,8 +267,6 @@ def save_patients_to_db(patients):
 
 
 # API ROUTES
-system = HospitalSystem()
-system.patients = {p.patient_id: p for p in boot_and_load_patients()}
 
 @app.route("/register", methods=["POST"])
 def register():
@@ -281,6 +287,8 @@ def move():
 # UNPACK DB
 @app.get("/patients/load")
 def get_patients():
+    print("PATIENT COUNT:", len(system.patients))
+    print("PATIENTS:", system.patients)
     return jsonify({pid: p.__dict__ for pid, p in system.patients.items()})
 
 # SAVE UPDATED TABLE TO DB
@@ -291,4 +299,4 @@ def save_patients():
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True, use_reloader=False)
