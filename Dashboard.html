@@ -1,29 +1,30 @@
 <!DOCTYPE html>
 <html>
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="description" content="Dashboard-staff view">
-    <title>Dashboard</title>
-    <link rel="stylesheet" href="Dashboard-staff.css">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="description" content="Dashboard-staff view">
+        <title>Dashboard</title>
+        <link rel="stylesheet" href="css/Dashboard-staff.css">
 
-    <!--Sidenav START-->
-    <link rel="stylesheet" href="css/sidenav.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-    <!--Sidenav END-->
+        <!--Sidenav START-->
+        <link rel="stylesheet" href="css/sidenav.css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/css/bootstrap.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+        <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+        <!--Sidenav END-->
 
-</head>
+    </head>
 
-<body>
-    <h1>
-        <a href="Dashboard.html"> <img src="meditrack.png" alt="Logo" style="width: 150px;"></a>
-    </h1>
+    <body>
+        <h1>
+            <a href="Dashboard.html"> <img src="meditrack.png" alt="Logo" style="width: 150px;"></a>
+        </h1>
 
-    <!--Adding sidenav-->
-    <div id="SideNav"></div>
+        <!--Adding sidenav-->
+        <div id="SideNav"></div>
 
+<<<<<<< Updated upstream
     <div class="contain" id="TA">
         <h3>Today's appointments: </h3>
     </div>
@@ -35,11 +36,31 @@
     <div class="contain" id="CA">
         <h3>Completed appointments: </h3>
     </div>
+=======
+        <div class="contain" id="NOA">
+            <label>Today's appoinments: </label>
+        </div>
 
-    <div class="contain" id="TC">
-        <h3>Total Clients: </h3>
-    </div>
+        <div class="contain" id="PA">
+            <label>Pending appoinments: </label>
+        </div>
 
+        <div class="contain" id="CA">
+            <label>Completed appoinments: </label>
+        </div>
+>>>>>>> Stashed changes
+
+        <div class="contain" id="NoteAdd">
+            <label>Add a Note: </label>
+            <br>
+            <button onclick="toggleContent()">Note</button>
+            <div id="SNote" style="display: none;">
+                <textarea id="Note"></textarea>
+                <button onclick="toggleContent()">Submit</button>
+            </div>
+        </div>
+
+<<<<<<< Updated upstream
     <div class="contain2" id="Tappoint">
         <h3>Client Name</h3>
         <h3>Time</h3>
@@ -47,61 +68,73 @@
         <h3>Action</h3>
         <p>cancel</p>
     </div>
+=======
+        <div class="contain" id="TA">
+            <h3>Appointments: </h3>
+>>>>>>> Stashed changes
+
+            <div class="contain2" id="Tappoint">
+                <label>Patient's Name</label>
+                <label>Time</label>
+                <label>Status button</label>
+                <label>Action</label>
+            </div>
+        </div>
 
 
-    <div class="contain3" id="Staff">
-        <h3>Today's appoinments: </h3>
-    </div>
-
-    <button class="btn">Submit Patient</button>
 
 
+        <script>
+
+            <!--Adding Notes part-->
+            function showContent() {
+                document.getElementById("SNote").style.display = "block";
+            }
+
+            function toggleContent() {
+                const sNote = document.getElementById("SNote");
+                sNote.style.display = sNote.style.display === "none" ? "block" : "none";
+            }
 
 
 
-
-
-
-
-
-    <script>
-        window.onload = function () {
-            fetch("/patients/load")
-            .then(r => r.json())
-            .then(data => {
-                console.log("Loaded patients:", data);
-            });
-        };
-        fetch('SideNav.html')
-            .then(res => res.text())
-            .then(html => {
-                document.getElementById('SideNav').innerHTML = html;
-                initSidebar();
-            });
-
-        function initSidebar() {
-            $(".sidebar-dropdown > a").click(function () {
-                $(".sidebar-submenu").slideUp(200);
-                if ($(this).parent().hasClass("active")) {
-                    $(".sidebar-dropdown").removeClass("active");
-                    $(this).parent().removeClass("active");
-                } else {
-                    $(".sidebar-dropdown").removeClass("active");
-                    $(this).next(".sidebar-submenu").slideDown(200);
-                    $(this).parent().addClass("active");
-                }
-            });
-
-            $("#close-sidebar").click(function () {
-                $(".page-wrapper").removeClass("toggled");
+            window.onload = function () {
+                fetch("/patients/load")
+                .then(r => r.json())
+                .then(data => {
+                    console.log("Loaded patients:", data);
+                });
+            };
+            fetch('SideNav.html')
+                .then(res => res.text())
+                .then(html => {
+                    document.getElementById('SideNav').innerHTML = html;
+                    initSidebar();
             });
 
-            $("#show-sidebar").click(function () {
-                $(".page-wrapper").addClass("toggled");
-            });
-        }
-    </script>
+            function initSidebar() {
+                $(".sidebar-dropdown > a").click(function () {
+                    $(".sidebar-submenu").slideUp(200);
+                    if ($(this).parent().hasClass("active")) {
+                        $(".sidebar-dropdown").removeClass("active");
+                        $(this).parent().removeClass("active");
+                    } else {
+                        $(".sidebar-dropdown").removeClass("active");
+                        $(this).next(".sidebar-submenu").slideDown(200);
+                        $(this).parent().addClass("active");
+                    }
+                });
 
-</body>
+                $("#close-sidebar").click(function () {
+                    $(".page-wrapper").removeClass("toggled");
+                });
+
+                $("#show-sidebar").click(function () {
+                    $(".page-wrapper").addClass("toggled");
+                });
+            }
+        </script>
+
+    </body>
 
 </html>

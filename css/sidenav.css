@@ -107,7 +107,7 @@ body {
 
 /*----------------sidebar-wrapper----------------*/
 .sidebar-wrapper {
-  width: 260px;
+  width: 200px;
   height: 100%;
   max-height: 100%;
   position: fixed;
@@ -200,10 +200,6 @@ body {
   color: #5cb85c;
 }
 
-/*-----------------------sidebar-search------------------------*/
-.sidebar-wrapper .sidebar-search > div {
-  padding: 10px 20px;
-}
 
 /*----------------------sidebar-menu-------------------------*/
 .sidebar-wrapper .sidebar-menu {
@@ -409,11 +405,7 @@ body {
   border-top: 1px solid #3a3f48;
 }
 
-.chiller-theme .sidebar-wrapper .sidebar-search input.search-menu,
-.chiller-theme .sidebar-wrapper .sidebar-search .input-group-text {
-  border-color: transparent;
-  box-shadow: none;
-}
+
 
 .chiller-theme .sidebar-wrapper .sidebar-header .user-info .user-role,
 .chiller-theme .sidebar-wrapper .sidebar-header .user-info .user-status,

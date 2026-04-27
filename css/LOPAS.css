@@ -1,0 +1,21 @@
+html{
+    font-family: 'Ubuntu', sans-serif;
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between; 
+}
+
+label{
+    display: inline-block;
+    font-weight: bold;
+    padding: 30px 60px 50px 60px;
+}
+
+
+.searchbar{
+    margin-right:100px ;
+    width: 25%;
+}

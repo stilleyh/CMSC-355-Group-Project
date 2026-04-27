@@ -4,4 +4,36 @@ h1{
 }
 body {
     padding-left: 270px;
+    font-family: 'Ubuntu', sans-serif;
+}
+
+div.contain{
+    background-color: rgb(200, 245, 245);
+    margin: 50px 50px 50px;
+    width: fit-content;
+    border-radius: 1em;
+    padding: 5px 30px 30px 30px;
+    border: blue;
+    display: inline-block;
+    margin-right: 0;
+}
+
+.contain > .contain2 > label{
+    margin-right: 75px;
+    margin-left: 90px;
+}
+
+label{
+    font-weight: bold;
+    display: inline-block;
+    margin-top: 15px;
+    margin-bottom: 10px;
+}
+
+.SNote{
+    display: none;
+}
+
+.SNote:checked {
+  display: block;
 }
