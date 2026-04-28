@@ -65,7 +65,7 @@ body {
 
 /*----------------page-wrapper----------------*/
 .page-wrapper {
-  height: 100vh;
+  height: 0;
 }
 
 .page-wrapper .theme {
@@ -112,8 +112,9 @@ body {
   max-height: 100%;
   position: fixed;
   top: 0;
-  left: -300px;
+  left: -200px;
   z-index: 999;
+  overflow-y: auto;
 }
 
 .sidebar-wrapper ul {

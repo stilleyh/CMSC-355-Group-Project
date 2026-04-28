@@ -107,3 +107,9 @@ p{
     color:rgb(67, 114, 255);
     text-align: center;
 }
+
+
+
+label{
+    margin-left: 10px;
+}

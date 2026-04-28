@@ -1,25 +1,7 @@
-html{
-    font-family: 'Ubuntu', sans-serif;
-}
-
 body{
     padding-left: 270px;
     box-sizing: border-box;
     font-family: 'Ubuntu', sans-serif;
-}
-
-
-.header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between; /* pushes h1 left, searchbar right */
-    padding: 0 50px;
-    margin-top: 20px;
-}
-
-.searchbar{
-    margin-right:70px ;
-    width: 20%;
 }
 
 div.contain{
@@ -42,7 +24,7 @@ div.contain{
 .contain > .EnterInfo > label{
     font-weight: bold;
     font-size: 17px;
-    padding-left: 50px;
-    padding-right: 50px;
+    padding-left: 40px;
+    padding-right: 40px;
     
 }

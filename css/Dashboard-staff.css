@@ -1,10 +1,10 @@
-h1{
-    margin-top: 0px;
-    margin-right: 0px;
-}
 body {
     padding-left: 270px;
     font-family: 'Ubuntu', sans-serif;
+}
+
+h1{
+    margin-left: 50px;
 }
 
 div.contain{
@@ -13,21 +13,41 @@ div.contain{
     width: fit-content;
     border-radius: 1em;
     padding: 5px 30px 30px 30px;
-    border: blue;
     display: inline-block;
     margin-right: 0;
 }
 
-.contain > .contain2 > label{
-    margin-right: 75px;
-    margin-left: 90px;
+div.contain2{
+    margin-left: 50px;
+    margin-right: 50px;
+    background-color: rgb(200, 245, 245);
+    padding-left: 30px;
+    padding-right: 30px;
+    margin-top: 30px;
+    padding-top: 20px;
+    width: fit-content;
+    display: flex;          
+    flex-direction: row;   
+    align-items: flex-start;
+    padding-bottom: 20px;
+    align-items: center;
+    border-radius: 1em;
 }
 
-label{
+.contain2 > .EnterInfo > label{
+    font-weight: bold;
+    font-size: 17px;
+    padding-left: 75px;
+    padding-right: 75px;
+    
+}
+
+.contain > label{
     font-weight: bold;
     display: inline-block;
     margin-top: 15px;
     margin-bottom: 10px;
+    background-color: rgb(200, 245, 245);
 }
 
 .SNote{
@@ -36,4 +56,13 @@ label{
 
 .SNote:checked {
   display: block;
+}
+
+#cancel{
+    text-align: center;
+    color: red;
+}
+
+#NoteAdd{
+    margin-top: 50px;
 }

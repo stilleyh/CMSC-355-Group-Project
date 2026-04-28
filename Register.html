@@ -14,10 +14,13 @@
             <form>
                 <h2>Register: </h2>
 
-                <h3>Enter First Name: </h3>
-                <h3>Enter Middle Name (optional): </h3>
-                <h3>Enter Last Name: </h3>
-                <h3>Job: </h3> 
+                <lable>Enter First Name: </lable><br><input class="Reg" type="text" placeholder="..." required>
+                <br>
+                <lable>Enter Middle Name (optional): </lable> <br><input class="Reg" type="text" placeholder="..." required>
+                <br>
+                <lable>Enter Last Name: </lable> <br><input class="Reg" type="text" placeholder="..." required>
+                <br>
+                <lable>Job: </lable> 
                 <select id="type of job">
                     <option value="Doctor">Doctor</option>
                 </select>
@@ -26,13 +29,15 @@
                 they can see. Also helps as for others to not make false accounts
                 as you'll need number assigned.)
                 for now, only have option for doctor
-                -->
+                
                 if press doctor
                     need to ender NPI
                 Create username
                 create password
                 (in future if continuing project, add 2 step verification)
                 -->
+                <br>
+                <button type="button" onclick="savePatients()">Submit</button>
             </form>
         </div>
     </body>

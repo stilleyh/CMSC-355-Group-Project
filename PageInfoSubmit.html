@@ -11,16 +11,96 @@
         <link rel="stylesheet" href="css/sidenav.css">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/css/bootstrap.min.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-        <script src="https://code.jquery.com/jquery-3.7.1.slim.min.js"></script>
-        <script defer src="sidenav.js"></script>
+        <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+       
         <!--Sidenav END-->
 
     </head>
 
     <body>
-        <h1>
-            <a href="Dashboard.html"><img src="meditrack.png" alt="Logo" style="width: 150px;"></a>
-        </h1>
+
+        <!--Adding sidenav-->
+        <div id="SideNav"></div>
+
+        <div class="page-wrapper chiller-theme toggled">
+
+            <a id="show-sidebar" class="btn btn-sm btn-dark" href="#">
+                <i class="fas fa-bars"></i>
+            </a>
+
+            <nav id="sidebar" class="sidebar-wrapper">
+                <div class="sidebar-content">
+
+                    <div class="sidebar-brand">
+                        <a href="Dashboard.html"><img src="meditrack.png" alt="Logo" style="width: 150px;"></a>
+                        <div id="close-sidebar"><i class="fas fa-times"></i></div>
+                    </div>
+
+                    <div class="sidebar-header">
+                        <div class="user-pic" style="color:#fff;">
+                            <i class="fa fa-user-circle fa-4x" aria-hidden="true"></i>
+                        </div>
+                        <div class="user-info">
+                            <span class="user-name"><strong>First Last Name</strong></span>
+                            <span class="user-role">Role Title</span>
+                            <span class="user-status"><i class="fa fa-circle"></i> <span>Online</span></span>
+                        </div>
+                    </div>
+                    
+                    <!-- sidebar-search -->
+
+                    <div class="sidebar-menu">
+                        <ul>
+                            <li> <a href="Dashboard.html"><i class="fa fa-tachometer-alt"></i><span>Dashboard</span></a></li>
+                            <li class="sidebar-dropdown">
+                                <a href="#"><i class="fa fa-shopping-cart"></i><span>Patients</span></a>
+                                <div class="sidebar-submenu">
+                                    <ul>
+                                        <li><a href="PageInfoSubmit.html"><span>Submit Patient</span></a></li>
+                                        <li><a href="ListofPatients.html">List of Patients</a></li>
+                                    </ul>
+                                </div>
+                            </li>
+                            <li>
+                                <a href="Staff.html"><i class="fa fa-chart-line"></i><span>Staff</span></a>
+                            </li>
+                            <li>
+                                <a href="Appointments.html"><i class="far fa-gem"></i><span>Add Appointments</span></a>
+                            </li>
+                            <li><a href="Calander.html"><i class="fa fa-calendar"></i><span>Calendar</span></a></li>
+                        </ul>
+                    </div>
+                    <!-- sidebar-menu -->
+
+                </div>
+                <!-- sidebar-content -->
+
+                <div class="sidebar-footer">
+                    <a href="#">
+                        <i class="fa fa-bell"></i>
+                        <span class="badge badge-pill badge-warning notification">3</span>
+                    </a>
+                    <a href="#">
+                        <i class="fa fa-envelope"></i>
+                        <span class="badge badge-pill badge-success notification">7</span>
+                    </a>
+                    <a href="#">
+                        <i class="fa fa-cog"></i>
+                        <span class="badge-sonar"></span>
+                    </a>
+                    <a href="login.html">
+                        <i class="fa fa-power-off"></i>
+                    </a>
+                </div>
+                <!-- sidebar-footer -->
+
+            </nav>
+            <!-- sidebar-wrapper -->
+
+        </div>
+        <!-- page-wrapper -->
+        <!--end of sidenav-->
+
 
         <!--Adding sidenav-->
         <div id="SideNav"></div>
@@ -376,27 +456,7 @@
             <!-- page-content -->
 
             <script>
-                fetch('SideNav.html')
-                    .then(res => res.text())
-                    .then(html => document.getElementById('SideNav').innerHTML = html);
-
-                const stepNames = ["Personal info", "Address & contact", "Symptoms", "Clinical history", "Admission"];
-                let currentTab = 0;
-                const tabs = document.getElementsByClassName("tab");
-
-                function buildDots() {
-                    const dotsContainer = document.getElementById("stepDots");
-                    dotsContainer.innerHTML = "";
-                    for (let i = 0; i < tabs.length; i++) {
-                        const dot = document.createElement("span");
-                        dot.className = "step-dot";
-                        if (i < currentTab) dot.classList.add("done");
-                        if (i === currentTab) dot.classList.add("active");
-                        dotsContainer.appendChild(dot);
-                    }
-                    document.getElementById("stepLabel").textContent =
-                        "Step " + (currentTab + 1) + " of " + tabs.length + " — " + stepNames[currentTab];
-                }
+   
 
                 function showTab(n) {
                     tabs[n].style.display = "block";
@@ -469,6 +529,41 @@
                     .then(console.log)
                     .catch(console.error);
                 }
+
+                <!--SideNav-->
+
+                window.onload = function () {
+                    fetch("/patients/load")
+                    .then(r => r.json())
+                    .then(data => {
+                        console.log("Loaded patients:", data);
+                    });
+                };
+                initSidebar();
+
+                function initSidebar() {
+                    $(".sidebar-dropdown > a").click(function () {
+                        $(".sidebar-submenu").slideUp(200);
+                        if ($(this).parent().hasClass("active")) {
+                            $(".sidebar-dropdown").removeClass("active");
+                            $(this).parent().removeClass("active");
+                        } else {
+                            $(".sidebar-dropdown").removeClass("active");
+                            $(this).next(".sidebar-submenu").slideDown(200);
+                            $(this).parent().addClass("active");
+                        }
+                    });
+
+                    $("#close-sidebar").click(function () {
+                        $(".page-wrapper").removeClass("toggled");
+                    });
+
+                    $("#show-sidebar").click(function () {
+                        $(".page-wrapper").addClass("toggled");
+                    });
+                }
+
+        
             </script>
         </div>
 
