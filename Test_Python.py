@@ -207,7 +207,7 @@ def boot_and_load_patients():
 
     for row in rows:
         patients.append(Patient(
-            patient_id=row["patient_id"],
+            patient_id=int(row["patient_id"]),
             name=row["name"],
             age=row["age"],
             symptoms=row["symptoms"] or "",
@@ -228,7 +228,11 @@ def boot_and_load_patients():
 patients = boot_and_load_patients()
 print("LOADED FROM DB:", len(patients))
 system = HospitalSystem()
-system.patients = {p.patient_id: p for p in patients}
+system.patients = {int(p.patient_id): p for p in patients}
+if system.patients:
+    system.next_patient_id = max(system.patients.keys()) + 1
+else:
+    system.next_patient_id = 1
 
 # SAVE PATIENT LIST TO DATABASE
 # DELETES DATABASE CONTENT AND REPLACES WITH CURRENT TABLE
@@ -292,11 +296,44 @@ def get_patients():
     return jsonify({pid: p.__dict__ for pid, p in system.patients.items()})
 
 # SAVE UPDATED TABLE TO DB
-@app.route("/api/patients/save", methods=["POST"])
+@app.route("/patients/save", methods=["POST"])
 def save_patients():
-    save_patients_to_db(system.patients)
-    return {"status": "ok"}
+    data = request.get_json()
 
+    # --- STEP 1: Normalize name ---
+    first = data.get("name", {}).get("first", "")
+    last = data.get("name", {}).get("last", "")
+    full_name = f"{first} {last}".strip()
+
+    # --- STEP 2: Age  ---
+    age = 0  # placeholder 
+
+    # --- STEP 3: Create patient ---
+    patient_id = system.register_patient(full_name, age)
+
+    # --- STEP 4: Symptoms ---
+    system.enter_person_info_and_symptoms(
+        patient_id,
+        data.get("symptoms", "")
+    )
+
+    # --- STEP 5: Room ---
+    room = data.get("admission", {}).get("room")
+    if room:
+        system.move_patient_room(patient_id, room)
+
+    # --- STEP 6: Notes (optional but useful) ---
+    system.patients[patient_id].notes.append(
+        f"RFC: {data.get('reasonForComing', '')}"
+    )
+
+    # --- STEP 7: Persist to DB ---
+    save_patients_to_db(system.patients)
+
+    return jsonify({
+        "status": "ok",
+        "patient_id": patient_id
+    })
 
 if __name__ == "__main__":
     app.run(debug=True, use_reloader=False)
