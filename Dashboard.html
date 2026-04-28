@@ -12,55 +12,137 @@
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/css/bootstrap.min.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
         <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
         <!--Sidenav END-->
 
     </head>
 
     <body>
-        <h1>
-            <a href="Dashboard.html"> <img src="meditrack.png" alt="Logo" style="width: 150px;"></a>
-        </h1>
-
         <!--Adding sidenav-->
         <div id="SideNav"></div>
 
-    <div class="contain" id="TA">
-        <h3>Today's appointments: </h3>
-    </div>
+        <div class="page-wrapper chiller-theme toggled">
 
-    <div class="contain" id="PA">
-        <h3>Pending appointments: </h3>
-    </div>
+            <a id="show-sidebar" class="btn btn-sm btn-dark" href="#">
+                <i class="fas fa-bars"></i>
+            </a>
 
-    <div class="contain" id="CA">
-        <h3>Completed appointments: </h3>
-    </div>
+            <nav id="sidebar" class="sidebar-wrapper">
+                <div class="sidebar-content">
 
-        <div class="contain" id="NoteAdd">
-            <label>Add a Note: </label>
-            <br>
-            <button onclick="toggleContent()">Note</button>
-            <div id="SNote" style="display: none;">
-                <textarea id="Note"></textarea>
-                <button onclick="toggleContent()">Submit</button>
+                    <div class="sidebar-brand">
+                        <a href="Dashboard.html"> <img src="meditrack.png" alt="Logo" style="width: 150px;"></a>
+                        <div id="close-sidebar"><i class="fas fa-times"></i></div>
+                    </div>
+
+                    <div class="sidebar-header">
+                        <div class="user-pic" style="color:#fff;">
+                            <i class="fa fa-user-circle fa-4x" aria-hidden="true"></i>
+                        </div>
+                        <div class="user-info">
+                            <span class="user-name"><strong>First Last Name</strong></span>
+                            <span class="user-role">Role Title</span>
+                            <span class="user-status"><i class="fa fa-circle"></i> <span>Online</span></span>
+                        </div>
+                    </div>
+                    
+                    <!-- sidebar-search -->
+
+                    <div class="sidebar-menu">
+                        <ul>
+                            <li> <a href="Dashboard.html"><i class="fa fa-tachometer-alt"></i><span>Dashboard</span></a></li>
+                            <li class="sidebar-dropdown">
+                                <a href="#"><i class="fa fa-shopping-cart"></i><span>Patients</span></a>
+                                <div class="sidebar-submenu">
+                                    <ul>
+                                        <li><a href="PageInfoSubmit.html"><span>Submit Patient</span></a></li>
+                                        <li><a href="ListofPatients.html">List of Patients</a></li>
+                                    </ul>
+                                </div>
+                            </li>
+                            <li>
+                                <a href="Staff.html"><i class="fa fa-chart-line"></i><span>Staff</span></a>
+                            </li>
+                            <li>
+                                <a href="Appointments.html"><i class="far fa-gem"></i><span>Add Appointments</span></a>
+                            </li>
+                            <li><a href="Calander.html"><i class="fa fa-calendar"></i><span>Calendar</span></a></li>
+                        </ul>
+                    </div>
+                    <!-- sidebar-menu -->
+
+                </div>
+                <!-- sidebar-content -->
+
+                <div class="sidebar-footer">
+                    <a href="#">
+                        <i class="fa fa-bell"></i>
+                        <span class="badge badge-pill badge-warning notification">3</span>
+                    </a>
+                    <a href="#">
+                        <i class="fa fa-envelope"></i>
+                        <span class="badge badge-pill badge-success notification">7</span>
+                    </a>
+                    <a href="#">
+                        <i class="fa fa-cog"></i>
+                        <span class="badge-sonar"></span>
+                    </a>
+                    <a href="login.html">
+                        <i class="fa fa-power-off"></i>
+                    </a>
+                </div>
+                <!-- sidebar-footer -->
+
+            </nav>
+            <!-- sidebar-wrapper -->
+
+        </div>
+        <!-- page-wrapper -->
+
+        <h1>Dashboard</h1>
+
+        <div style="display: flex; align-items: flex-start; gap: 0;">
+            <div class="contain" id="TA">
+                <h3>Today's appointments: </h3>
+            </div>
+
+            <div class="contain" id="PA">
+                <h3>Pending appointments: </h3>
+            </div>
+
+            <div class="contain" id="CA">
+                <h3>Completed appointments: </h3>
+            </div>
+
+            <div class="contain" id="NoteAdd">
+                <label>Add a Note: </label>
+                <br>
+                <button onclick="toggleContent()">Note</button>
+                <div id="SNote" style="display: none;">
+                    <textarea id="Note"></textarea>
+                    <button onclick="toggleContent()">Submit</button>
+                </div>
             </div>
         </div>
 
-    <div class="contain2" id="Tappoint">
-        <h3>Client Name</h3>
-        <h3>Time</h3>
-        <h3>Status button</h3>
-        <h3>Action</h3>
-        <p>cancel</p>
-    </div>
-
-            <div class="contain2" id="Tappoint">
-                <label>Patient's Name</label>
+        <div class="contain2" id="Tappoint">
+            <div class="EnterInfo" id="PatientInfo">
+                <label>Patient Name</label>
+            </div>
+            <div class="EnterInfo" id="TimeInfo">
                 <label>Time</label>
-                <label>Status button</label>
-                <label>Action</label>
             </div>
+            <div class="EnterInfo" id="StatusInfo">
+                <label>Status</label>
+            </div>
+            <div class="EnterInfo" id="ActionInfo">
+                <label>Action</label>
+     
+            </div> 
         </div>
+
+         
+    
 
 
 
@@ -86,12 +168,7 @@
                     console.log("Loaded patients:", data);
                 });
             };
-            fetch('SideNav.html')
-                .then(res => res.text())
-                .then(html => {
-                    document.getElementById('SideNav').innerHTML = html;
-                    initSidebar();
-            });
+            initSidebar();
 
             function initSidebar() {
                 $(".sidebar-dropdown > a").click(function () {
@@ -114,6 +191,8 @@
                     $(".page-wrapper").addClass("toggled");
                 });
             }
+
+
         </script>
 
     </body>
