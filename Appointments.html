@@ -139,8 +139,39 @@
                 $("#show-sidebar").click(function () {
                     $(".page-wrapper").addClass("toggled");
                 });
-            }
+            };
 
+            function saveAppointment() {
+                const appointment = {
+                    appointment_id: Date.now(),
+
+                    doctor: document.querySelector("#appointment_doctor").value,
+                    room: document.querySelector("#appointment_room").value,
+                    time: document.querySelector("#appointment_time").value,
+
+                    procedure_reason: document.querySelector("#appointment_reason").value,
+
+                    urgent: document.querySelector("#appointment_urgent")?.checked || false,
+
+                    notes: [
+                        document.querySelector("#appointment_notes").value
+                    ],
+
+                    // keep this simple for now (matches your backend reality better)
+                    patient_details: {
+                        patient_id: document.querySelector("#appointment_patient_id").value
+                    }
+                };
+
+                    fetch("/appointments/save", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify(appointment)
+                    })
+                    .then(r => r.json())
+                    .then(console.log)
+                    .catch(console.error);
+                }
 
         </script>
     </body>

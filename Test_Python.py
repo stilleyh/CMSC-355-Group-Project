@@ -8,6 +8,7 @@ import pdb
 app = Flask(__name__, static_folder=".", static_url_path="")
 
 # DATA MODELS
+# PATIENTS
 @dataclass
 class Patient:
     patient_id: int
@@ -23,6 +24,24 @@ class Patient:
     lab_results: Optional[str] = None
     notes: List[str] = field(default_factory=list)
 
+# STAFF
+@dataclass
+class Staff:
+    firstname: str
+    lastname: str
+    position: str
+    email: str
+
+# APPOINTMENTS
+@dataclass
+class Appointment:
+    doctor: str
+    room: str
+    time: str
+    procedure_reason: str
+    urgent: bool = False
+    notes: List[str] = field(default_factory=list)
+    patient_id: int
 
 @dataclass
 class HospitalSystem:
@@ -172,8 +191,74 @@ class HospitalSystem:
     def admin_cancel_appointment(self):
         return True
 
+# BOOT/LOAD STAFF DATABASE INTO MEMORY
+# IF NO DATABASE EXISTS, CREATE NEW TABLE
+def boot_and_load_staff() -> List[Staff]:
+    conn = sqlite3.connect("hospital.db")
+    conn.row_factory = sqlite3.Row
+    cur = conn.cursor()
 
+    cur.execute("""
+    CREATE TABLE IF NOT EXISTS staff (
+        firstname TEXT,
+        lastname TEXT,
+        position TEXT,
+        email TEXT
+    )
+    """)
 
+    cur.execute("SELECT * FROM staff")
+    rows = cur.fetchall()
+
+    staff_members = []
+
+    for row in rows:
+        staff_members.append(Staff(
+            firstname=row["firstname"],
+            lastname=row["lastname"],
+            position=row["position"],
+            email=row["email"]
+        ))
+
+    conn.close()
+    return staff_members
+
+# BOOT/LOAD APPOINTMENTS DATABASE
+def boot_and_load_appointments() -> List[Appointment]:
+    conn = sqlite3.connect("hospital.db")
+    conn.row_factory = sqlite3.Row
+    cur = conn.cursor()
+
+    cur.execute("""
+    CREATE TABLE IF NOT EXISTS appointments (
+        doctor TEXT,
+        room TEXT,
+        time TEXT,
+        procedure_reason TEXT,
+        urgent INTEGER,
+        notes TEXT,
+        patient_id INTEGER
+    )
+    """)
+
+    cur.execute("SELECT * FROM appointments")
+    rows = cur.fetchall()
+
+    appointments = []
+
+    for row in rows:
+        appointments.append(Appointment(
+            doctor=row["doctor"],
+            room=row["room"],
+            time=row["time"],
+            procedure_reason=row["procedure_reason"],
+            urgent=bool(row["urgent"]),
+            notes=json.loads(row["notes"]) if row["notes"] else [],
+            patient_id=row["patient_id"]
+        ))
+
+    conn.close()
+    return appointments
 
 
 # BOOT/LOAD PATIENT DATABASE INTO MEMORY
@@ -225,14 +310,22 @@ def boot_and_load_patients():
     
     return patients
 
+# Load databases to memory
 patients = boot_and_load_patients()
-print("LOADED FROM DB:", len(patients))
-system = HospitalSystem()
-system.patients = {int(p.patient_id): p for p in patients}
-if system.patients:
-    system.next_patient_id = max(system.patients.keys()) + 1
-else:
-    system.next_patient_id = 1
+staff = boot_and_load_staff()
+appointments = boot_and_load_appointments()
+
+print("LOADED FROM DB: patients =", len(patients))
+print("LOADED FROM DB: staff =", len(staff))
+print("LOADED FROM DB: appointments =", len(appointments))
+
+system = HospitalSystem(
+    staff=staff,
+    appointments=appointments,
+    patients={p.patient_id: p for p in patients}
+)
+
+system.next_patient_id = max(system.patients, default=0) + 1
 
 # SAVE PATIENT LIST TO DATABASE
 # DELETES DATABASE CONTENT AND REPLACES WITH CURRENT TABLE

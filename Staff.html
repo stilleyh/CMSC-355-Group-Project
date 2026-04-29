@@ -178,8 +178,27 @@
                 $("#show-sidebar").click(function () {
                     $(".page-wrapper").addClass("toggled");
                 });
-            }
+            };
 
+        function saveStaff() {
+            const staff = {
+                staff_id: Date.now(),
+
+                firstname: document.querySelector("#staff_first_name").value,
+                lastname: document.querySelector("#staff_last_name").value,
+                position: document.querySelector("#staff_position").value,
+                email: document.querySelector("#staff_email").value
+            };
+
+            fetch("/staff/save", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(staff)
+            })
+            .then(r => r.json())
+            .then(console.log)
+            .catch(console.error);
+        }
             
         </script>
 

@@ -163,12 +163,24 @@
 
             window.onload = function () {
                 fetch("/patients/load")
-                .then(r => r.json())
-                .then(data => {
-                    console.log("Loaded patients:", data);
-                });
+                    .then(r => r.json())
+                    .then(data => {
+                        console.log("Loaded patients:", data);
+                    });
+
+                fetch("/appointments/load")
+                    .then(r => r.json())
+                    .then(data => {
+                        console.log("Loaded appointments:", data);
+                    });
+
+                fetch("/staff/load")
+                    .then(r => r.json())
+                    .then(data => {
+                        console.log("Loaded staff:", data);
+                    });
             };
-            initSidebar();
+                        initSidebar();
 
             function initSidebar() {
                 $(".sidebar-dropdown > a").click(function () {
