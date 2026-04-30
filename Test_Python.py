@@ -32,6 +32,12 @@ class Staff:
     position: str
     email: str
 
+# LOGINS
+@dataclass
+class Login:
+    username: str
+    password: str
+
 # APPOINTMENTS
 @dataclass
 class Appointment:
