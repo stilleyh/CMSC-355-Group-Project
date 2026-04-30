@@ -3,7 +3,7 @@
     <head>
         <meta charset="UTF-8">
         <meta name="description" content="All of person's appointments">
-        <title>Calander</title>
+        <title>Create appoinment</title>
         <link rel="stylesheet" href="css/Appointments.css">
 
         <!--Sidenav START-->
@@ -107,6 +107,80 @@
 
         </div>
         <!-- page-wrapper -->
+
+        <h2>Create Appoinment: </h2>
+
+        <form action="">
+            <h3>Patient's info:</h3>
+            <div class="input-box">
+                <input type="text" id="first_name" placeholder="First Name" required>
+            </div>
+            <br>
+            <div class="input-box">
+                <input type="text" id="middle_name" placeholder="Middle Name (Optional)">
+            </div>
+            <br>
+            <div class="input-box">
+                <input type="text" id="last_name" placeholder="Last Name" required>
+            </div>
+            <br>
+            <div class="input-box">
+                <input type="number" id="patientNumber" placeholder="Patient Number" required>
+            </div>
+
+            <h3>Subject/Reason: </h3>
+            <div class="input-box">
+                <input type="text" id="Subject" placeholder="Subject" required>
+            </div>
+            <br>
+            <div class="input-box" id="bigBox">
+                <input type="text" id="Reason" placeholder="Reason" required>
+            </div>
+
+            <h3>Schedule: </h3>
+            <div>
+                <input type="text" id="doctor" placeholder="Doctor">
+            </div>
+            <br>
+            <div class="DateInput">
+                <input type="date" name="scheduleDate" required>
+            </div>
+            <br>
+            <div class="DateInput">
+                <input type="time" name="scheduleTime" required>
+            </div>
+            <br>
+            <div class="input-box">
+                <input type="text" id="Room" placeholder="Room" required>
+            </div>
+
+            <h3>Extra: </h3>
+            <select class="emergency"> <!--add later-->
+                <option>Please enter urgency level</option>
+                <option value="small">Low</option>
+                <option value="small">Urgent</option>
+                <option value="small">Critical</option>
+                <option value="small">Life-threatening</option>
+                
+
+            </select>
+            <br>
+            <div class="input-box">
+                <input type="text" id="notes" placeholder="Notes">
+            </div>
+            <br>
+            <div style="overflow:auto; margin-top: 20px;">
+                <div style="float:right;">
+                    <button type="button" onclick="savePatients()">Submit</button>
+                </div>
+            </div>
+
+
+        </form>
+
+
+
+
 
         <script>
 
