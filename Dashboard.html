@@ -149,7 +149,6 @@
 
         <script>
 
-            <!--Adding Notes part-->
             function showContent() {
                 document.getElementById("SNote").style.display = "block";
             }
@@ -159,6 +158,32 @@
                 sNote.style.display = sNote.style.display === "none" ? "block" : "none";
             }
 
+            function renderAppointments(data) {
+                const container = document.getElementById("Tappoint");
+
+                container.innerHTML = `
+                    <div class="patient-row header-row">
+                        <div class="EnterInfo"><strong>Name</strong></div>
+                        <div class="EnterInfo"><strong>Time</strong></div>
+                        <div class="EnterInfo"><strong>Status</strong></div>
+                        <div class="EnterInfo"><strong>Reason</strong></div>
+                    </div>
+                `;
+
+                Object.values(data).forEach(appt => {
+                    const row = document.createElement("div");
+                    row.className = "patient-row";
+
+                    row.innerHTML = `
+                        <div class="EnterInfo">${appt.patient_id ?? "-"}</div>
+                        <div class="EnterInfo">${appt.time ?? "-"}</div>
+                        <div class="EnterInfo">${appt.status ?? "Pending"}</div>
+                        <div class="EnterInfo">${appt.procedure_reason ?? "-"}</div>
+                    `;
+
+                    container.appendChild(row);
+                });
+            }
 
 
             window.onload = function () {
@@ -167,11 +192,11 @@
                     .then(data => {
                         console.log("Loaded patients:", data);
                     });
-
                 fetch("/appointments/load")
                     .then(r => r.json())
                     .then(data => {
                         console.log("Loaded appointments:", data);
+                        renderAppointments(data);
                     });
 
                 fetch("/staff/load")
@@ -180,7 +205,7 @@
                         console.log("Loaded staff:", data);
                     });
             };
-                        initSidebar();
+            initSidebar();
 
             function initSidebar() {
                 $(".sidebar-dropdown > a").click(function () {
