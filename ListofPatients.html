@@ -85,8 +85,19 @@
                 .then(data => {
                     console.log("Loaded patients:", data);
                     renderPatients(data);
-                })
-                .catch(err => console.error("Failed to load patients:", err));
+                });
+
+            fetch("/staff/load")
+                .then(r => r.json())
+                .then(data => {
+                    console.log("Loaded staff:", data);
+                });
+
+            fetch("/appointments/load")
+                .then(r => r.json())
+                .then(data => {
+                    console.log("Loaded appointments:", data);
+                });
         };
     </script>
 

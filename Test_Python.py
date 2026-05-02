@@ -32,6 +32,12 @@ class Staff:
     position: str
     email: str
 
+# LOGINS
+@dataclass
+class Login:
+    username: str
+    password: str
+
 # APPOINTMENTS
 @dataclass
 class Appointment:
@@ -39,13 +45,15 @@ class Appointment:
     room: str
     time: str
     procedure_reason: str
+    patient_id: int
     urgent: bool = False
     notes: List[str] = field(default_factory=list)
-    patient_id: int
 
 @dataclass
 class HospitalSystem:
     patients: Dict[int, Patient] = field(default_factory=dict)
+    staff: Dict[int, Staff] = field(default_factory=dict)
+    appointments: Dict[int, Appointment] = field(default_factory=dict)
     next_patient_id: int = 1
 
     # REQ1 – Register Patient
@@ -191,10 +199,20 @@ class HospitalSystem:
     def admin_cancel_appointment(self):
         return True
 
+# OBJECT FORMATTING FIXER
+def safe_obj(o):
+    result = {}
+    for k, v in o.__dict__.items():
+        try:
+            result[k] = str(v)
+        except:
+            result[k] = ""
+    return result
+
 # BOOT/LOAD STAFF DATABASE INTO MEMORY
 # IF NO DATABASE EXISTS, CREATE NEW TABLE
 def boot_and_load_staff() -> List[Staff]:
-    conn = sqlite3.connect("hospital.db")
+    conn = sqlite3.connect("staff.db")
     conn.row_factory = sqlite3.Row
     cur = conn.cursor()
 
@@ -223,9 +241,11 @@ def boot_and_load_staff() -> List[Staff]:
     conn.close()
     return staff_members
 
+
+
 # BOOT/LOAD APPOINTMENTS DATABASE
 def boot_and_load_appointments() -> List[Appointment]:
-    conn = sqlite3.connect("hospital.db")
+    conn = sqlite3.connect("appointments.db")
     conn.row_factory = sqlite3.Row
     cur = conn.cursor()
 
@@ -240,6 +260,7 @@ def boot_and_load_appointments() -> List[Appointment]:
         patient_id INTEGER
     )
     """)
+
 
     cur.execute("SELECT * FROM appointments")
     rows = cur.fetchall()
@@ -361,9 +382,42 @@ def save_patients_to_db(patients):
     conn.commit()
     conn.close()
 
+# LOGIN DB CHECK
+def verify_login(username, password):
+    conn = sqlite3.connect("logins.db")
+    cur = conn.cursor()
+
+    cur.execute("""
+    CREATE TABLE IF NOT EXISTS logins (
+        username TEXT,
+        password TEXT
+    )
+    """)
+
+    cur.execute(
+        "SELECT * FROM logins WHERE username=? AND password=?",
+        (username, password)
+    )
+
+    result = cur.fetchone()
+    conn.close()
+
+    return result is not None
 
 
 # API ROUTES
+
+@app.route("/login", methods=["POST"])
+def login():
+    data = request.get_json()
+
+    username = data.get("username")
+    password = data.get("password")
+
+    if verify_login(username, password):
+        return jsonify({"success": True}), 200
+    else:
+        return jsonify({"success": False}), 401
 
 @app.route("/register", methods=["POST"])
 def register():
@@ -427,6 +481,34 @@ def save_patients():
         "status": "ok",
         "patient_id": patient_id
     })
+
+@app.get("/staff/load")
+def get_staff():
+    print("STAFF:", len(system.staff))
+
+    return jsonify([
+        s.__dict__ for s in system.staff
+    ])
+
+@app.route("/staff/save", methods=["POST"])
+def save_staff():
+    # handle staff save
+    return {"status": "staff saved"}
+
+@app.get("/appointments/load")
+def get_appointments():
+    print("APPOINTMENTS:", len(system.appointments))
+
+    return jsonify([
+        a.__dict__ for a in system.appointments
+    ])
+
+@app.route("/appointments/save", methods=["POST"])
+def save_appointments():
+    # handle appointments save
+    return {"status": "appointments saved"}
+
+
 
 if __name__ == "__main__":
     app.run(debug=True, use_reloader=False)
